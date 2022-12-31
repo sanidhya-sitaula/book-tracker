@@ -38,7 +38,12 @@ function RootNavigator() {
 
   function BottomTabNavigator() {
     return (
-      <BottomTab.Navigator>
+      <BottomTab.Navigator screenOptions = {{
+        tabBarStyle: {
+          backgroundColor: "#1B1C39",
+        },
+        tabBarActiveTintColor: "#BA6400"
+      }}>
         <BottomTab.Screen
           name="Home"
           component={HomeScreen}
