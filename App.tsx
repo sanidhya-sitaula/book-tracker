@@ -1,10 +1,14 @@
 import { StatusBar } from 'expo-status-bar';
 import { StyleSheet, Text, View } from 'react-native';
+import { useResources } from './hooks/useResources';
 import Navigation from './navigation';
 
 export default function App() {
+
+  const isLoaded = useResources();
+
   return (
-      <Navigation />
+      isLoaded && <Navigation />
   );
 }
 
