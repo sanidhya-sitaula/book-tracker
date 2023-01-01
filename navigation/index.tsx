@@ -6,6 +6,8 @@ import { FontAwesome } from "@expo/vector-icons";
 import { AllBooksScreen } from "../screens/AllBooksScreen";
 import { NotesScreen } from "../screens/NotesScreen";
 import { StatisticsScreen } from "../screens/StatisticsScreen";
+import { Book } from "../models/Book";
+import { BookDetailsScreen } from "../screens/BookDetailsScreen";
 
 export type RootStackParamList = {
     Root: undefined;
@@ -13,6 +15,7 @@ export type RootStackParamList = {
     AllBooks: undefined;
     Notes: undefined;
     Statistics: undefined;
+    BookDetailsScreen: {book: Book};
 };
 
 export default function Navigation() {
@@ -30,6 +33,7 @@ function RootNavigator() {
     return (
       <Stack.Navigator>
         <Stack.Screen name="Root" component={BottomTabNavigator} options={{ headerShown: false }} />  
+        <Stack.Screen name = "BookDetailsScreen"  component= {BookDetailsScreen} options = {{headerShown: false}} />
       </Stack.Navigator>
     );
   }
