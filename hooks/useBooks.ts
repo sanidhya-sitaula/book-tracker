@@ -1,12 +1,14 @@
 import { useEffect, useState } from "react"
 import { Book } from "../models/Book";
 import app from "../firebase";
+import { useIsFocused } from "@react-navigation/native";
 
 const db = app.firestore();
 
 export const useBooks = () => {
 
     const [books, setBooks] = useState<Book[]>([]);
+    const isFocused = useIsFocused();
 
     useEffect(() => {
         const getBooks = async () => {
@@ -23,7 +25,7 @@ export const useBooks = () => {
 
         getBooks();
 
-    }, []);
+    }, [isFocused]);
 
     return books;
 }
