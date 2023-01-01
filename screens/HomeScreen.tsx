@@ -10,19 +10,32 @@ import { Chart } from "../components/LineChart";
 import { FontAwesome } from "@expo/vector-icons";
 import { NativeStackScreenProps } from "@react-navigation/native-stack";
 import { RootStackParamList } from "../navigation";
+import { useSessions } from "../hooks/useSessions";
+import { getAllChartData, getWeeklyChartData } from "../utils/ChartData";
+import { ChartData } from "react-native-chart-kit/dist/HelperTypes";
 
 type Props = NativeStackScreenProps<RootStackParamList, "Home">;
 
 export const HomeScreen = ({ navigation }: Props) => {
   const books = useBooks();
+  const sessions = useSessions();
 
   const [mostRecentBook, setMostRecentBook] = useState<Book>();
+  const [chartData, setChartData] = useState<ChartData | undefined>(undefined);
 
   useEffect(() => {
     if (books) {
       setMostRecentBook(getMostRecentBook(books));
     }
   }, [books]);
+
+
+  useEffect(() => {
+    if (sessions && books) {
+       const chartData = getWeeklyChartData(sessions);
+       setChartData(chartData);
+    }
+  }, [sessions, books])
 
   return (
     <ScrollView style={styles.container}>
@@ -48,11 +61,11 @@ export const HomeScreen = ({ navigation }: Props) => {
             </View>
             <View style={{ display: "flex", marginTop: 20 }}>
               <Card>
-                <Chart />
+                {chartData ? <Chart chartData = {chartData}/> : <ActivityIndicator size = "large" />}
                 <Pressable
                   style={{ alignSelf: "flex-end", flexDirection: "row", justifyContent: "space-between", alignItems: "center", marginTop: -10 }}
                 >
-                  <Text style={{ color: "#ffffff", fontFamily: "nunito-sans-regular", fontSize: 20 }}>this week</Text>
+                  <Text style={{ color: "#ffffff", fontFamily: "nunito-sans-regular", fontSize: 20 }}>last seven days</Text>
                   <FontAwesome name="angle-right" size={20} color={"#BA6400"} style={{ marginLeft: 5 }} />
                 </Pressable>
               </Card>

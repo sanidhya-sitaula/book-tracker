@@ -1,5 +1,6 @@
 import { LineChart } from "react-native-chart-kit";
 import { View, Text, Dimensions } from "react-native";
+import { ChartData } from "react-native-chart-kit/dist/HelperTypes";
 
 const line = {
   labels: ["", "", "", "", "", "", ""],
@@ -11,11 +12,13 @@ const line = {
   ],
 };
 
-export const Chart = () => {
+
+export const Chart = ({chartData}: {chartData?: ChartData}) => {
+
   return (
     <View>
       <LineChart
-        data={line}
+        data={chartData ? JSON.parse(JSON.stringify(chartData)) : line}
         width={380} // from react-native
         height={170}
         chartConfig={{

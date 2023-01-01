@@ -8,6 +8,9 @@ import { NotesScreen } from "../screens/NotesScreen";
 import { StatisticsScreen } from "../screens/StatisticsScreen";
 import { Book } from "../models/Book";
 import { BookDetailsScreen } from "../screens/BookDetailsScreen";
+import { ReadingScreen } from "../screens/ReadingScreen";
+import { FinishSessionScreen } from "../screens/FinishSessionScreen";
+import { ReadingSession } from "../models/ReadingSession";
 
 export type RootStackParamList = {
     Root: undefined;
@@ -16,6 +19,8 @@ export type RootStackParamList = {
     Notes: undefined;
     Statistics: undefined;
     BookDetailsScreen: {book: Book};
+    ReadingScreen: {book: Book};
+    FinishSessionScreen: {readingSession: ReadingSession};
 };
 
 export default function Navigation() {
@@ -34,6 +39,8 @@ function RootNavigator() {
       <Stack.Navigator>
         <Stack.Screen name="Root" component={BottomTabNavigator} options={{ headerShown: false }} />  
         <Stack.Screen name = "BookDetailsScreen"  component= {BookDetailsScreen} options = {{headerShown: false}} />
+        <Stack.Screen name = "ReadingScreen"  component= {ReadingScreen} options = {{headerShown: false}} />
+        <Stack.Screen name = "FinishSessionScreen" component = {FinishSessionScreen} options = {{presentation: "modal", headerShown: false}} />
       </Stack.Navigator>
     );
   }
