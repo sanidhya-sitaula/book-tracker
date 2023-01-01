@@ -4,8 +4,8 @@ export interface Book {
     author: string;
     genre: string;
     image: string;
-    last_read: Date;
-    date_added: Date;
+    last_read: any;
+    date_added: any;
     pages: number;
     current_page: number;
 }

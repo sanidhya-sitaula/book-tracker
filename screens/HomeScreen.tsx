@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { Text, View, StyleSheet, Image, ScrollView, Pressable } from "react-native";
+import { Text, View, StyleSheet, Image, ScrollView, Pressable, ActivityIndicator } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { Card } from "../components/styled/Card";
 import { useBooks } from "../hooks/useBooks";
@@ -8,8 +8,12 @@ import { getMostRecentBook } from "../utils/BookFilters";
 import ProgressBar from "react-native-progress-bar-horizontal";
 import { Chart } from "../components/LineChart";
 import { FontAwesome } from "@expo/vector-icons";
+import { NativeStackScreenProps } from "@react-navigation/native-stack";
+import { RootStackParamList } from "../navigation";
 
-export const HomeScreen = () => {
+type Props = NativeStackScreenProps<RootStackParamList, "Home">;
+
+export const HomeScreen = ({ navigation }: Props) => {
   const books = useBooks();
 
   const [mostRecentBook, setMostRecentBook] = useState<Book>();
@@ -45,9 +49,11 @@ export const HomeScreen = () => {
             <View style={{ display: "flex", marginTop: 20 }}>
               <Card>
                 <Chart />
-                <Pressable style = {{alignSelf: "flex-end", flexDirection: "row", justifyContent: "space-between", alignItems: "center", marginTop: -10}}>
-                  <Text style={{ color: "#BA6400", fontFamily: "nunito-sans-regular", fontSize: 20}}>this week</Text>
-                  <FontAwesome name = "angle-right" size = {20} color = {"#BA6400"} style = {{marginLeft: 5}}/>
+                <Pressable
+                  style={{ alignSelf: "flex-end", flexDirection: "row", justifyContent: "space-between", alignItems: "center", marginTop: -10 }}
+                >
+                  <Text style={{ color: "#ffffff", fontFamily: "nunito-sans-regular", fontSize: 20 }}>this week</Text>
+                  <FontAwesome name="angle-right" size={20} color={"#BA6400"} style={{ marginLeft: 5 }} />
                 </Pressable>
               </Card>
             </View>
@@ -58,7 +64,7 @@ export const HomeScreen = () => {
             </View>
             {mostRecentBook ? (
               <View style={styles.continueReadingCardContainer}>
-                <Card>
+                <Card onPress={() => navigation.navigate("BookDetailsScreen", { book: mostRecentBook })}>
                   <View style={styles.cardTopContainer}>
                     <View style={styles.imageContainer}>
                       <Image source={{ uri: mostRecentBook.image }} style={styles.bookImage} />
@@ -86,7 +92,11 @@ export const HomeScreen = () => {
                 </Card>
               </View>
             ) : (
-              <Text style={{ color: "#fff" }}>Loading...</Text>
+              <Card>
+                <View style={{ justifyContent: "center", alignItems: "center", alignSelf: "center" }}>
+                  <ActivityIndicator size="large" />
+                </View>
+              </Card>
             )}
           </View>
         </View>
@@ -176,7 +186,7 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     justifyContent: "space-between",
     alignItems: "center",
-    marginTop: 10
+    marginTop: 10,
   },
 
   bookTitleText: {

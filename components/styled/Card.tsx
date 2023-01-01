@@ -1,14 +1,15 @@
-import { View, StyleSheet } from "react-native"; 
+import { View, StyleSheet, Pressable } from "react-native"; 
 
 type CardProps = {
     children: React.ReactNode;
+    onPress?: () => void;
 }
 
-export const Card = ({children}: CardProps) => {
+export const Card = ({children, onPress}: CardProps) => {
     return (
-        <View style = {styles.container}>
+        <Pressable style = {styles.container} onPress = {onPress}>
             {children}
-        </View>
+        </Pressable>
     )
 }
 
