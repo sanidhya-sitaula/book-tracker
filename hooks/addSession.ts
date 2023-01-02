@@ -19,7 +19,7 @@ export const addSession = async (readingSession: ReadingSession) => {
   const addedSessionId = await db.collection("sessions").add(session);
 
   const bookRef = await db.collection("books").doc(session.book_id);
-  const editedBookId = await bookRef.update({current_page: readingSession.book.current_page + session.num_pages_read})
+  const editedBookId = await bookRef.update({current_page: readingSession.book.current_page + session.num_pages_read, last_read: session.end_timestamp })
 
   return addedSessionId;
 };

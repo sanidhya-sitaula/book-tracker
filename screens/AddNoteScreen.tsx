@@ -59,7 +59,7 @@ export const AddNoteScreen = ({ route, navigation }: AddNoteScreenProps & Props)
     const thisNote: Note = {
       note_text: noteText,
       added_timestamp: new Date(),
-      book_id: book.id,
+      book_id: book.id!,
       page_number: Number(pageNumber),
     };
 
@@ -73,7 +73,7 @@ export const AddNoteScreen = ({ route, navigation }: AddNoteScreenProps & Props)
 
   useEffect(() => {
     const getAllNotes = async () => {
-        const notes = await getNotes(book.id);
+        const notes = await getNotes(book.id!);
         return notes;
     }
     if (loadNotes) {
