@@ -11,6 +11,9 @@ import { BookDetailsScreen } from "../screens/BookDetailsScreen";
 import { ReadingScreen } from "../screens/ReadingScreen";
 import { FinishSessionScreen } from "../screens/FinishSessionScreen";
 import { ReadingSession } from "../models/ReadingSession";
+import { SubmittedSessionScreen } from "../screens/SubmittedSessionScreen";
+import { AddNoteScreen } from "../screens/AddNoteScreen";
+import { Note } from "../models/Note";
 
 export type RootStackParamList = {
     Root: undefined;
@@ -20,7 +23,9 @@ export type RootStackParamList = {
     Statistics: undefined;
     BookDetailsScreen: {book: Book};
     ReadingScreen: {book: Book};
-    FinishSessionScreen: {readingSession: ReadingSession};
+    FinishSessionScreen: {readingSession: ReadingSession, book: Book};
+    SubmittedSessionScreen: {sessionId: string, book: Book };
+    AddNoteScreen: {book: Book};
 };
 
 export default function Navigation() {
@@ -41,6 +46,9 @@ function RootNavigator() {
         <Stack.Screen name = "BookDetailsScreen"  component= {BookDetailsScreen} options = {{headerShown: false}} />
         <Stack.Screen name = "ReadingScreen"  component= {ReadingScreen} options = {{headerShown: false}} />
         <Stack.Screen name = "FinishSessionScreen" component = {FinishSessionScreen} options = {{presentation: "modal", headerShown: false}} />
+        <Stack.Screen name = "SubmittedSessionScreen"  component= {SubmittedSessionScreen} options = {{presentation: "modal", headerShown: false}} />
+        <Stack.Screen name = "AddNoteScreen"  component= {AddNoteScreen} options = {{presentation: "modal", headerShown: false}} />
+
       </Stack.Navigator>
     );
   }

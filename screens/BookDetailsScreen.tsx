@@ -13,6 +13,7 @@ import { useSessionsByBookId } from "../hooks/useSessions";
 import { ChartData } from "react-native-chart-kit/dist/HelperTypes";
 import { getChartDataByBook } from "../utils/ChartData";
 import { getAveragePagesPerDay, getTotalDaysRead, getTotalMinsRead } from "../utils/BookDetailsData";
+import { useNotes, useNotesByBook } from "../hooks/useNotes";
 
 type BookDetailsScreenProps = {
   route: {
@@ -33,23 +34,23 @@ type TabsProps = "notes" | "statistics";
 
 type Props = NativeStackScreenProps<RootStackParamList, "BookDetailsScreen">;
 
-const notes = [
-  {
-    id: "1",
-    noteText: "Note Content 1",
-    dateAdded: "2022-04-10",
-  },
-  {
-    id: "2",
-    noteText: "Note Content 2",
-    dateAdded: "2022-04-10",
-  },
-  {
-    id: "3",
-    noteText: "Note Content 3",
-    dateAdded: "2022-04-10",
-  },
-];
+// const notes = [
+//   {
+//     id: "1",
+//     noteText: "Note Content 1",
+//     dateAdded: "2022-04-10",
+//   },
+//   {
+//     id: "2",
+//     noteText: "Note Content 2",
+//     dateAdded: "2022-04-10",
+//   },
+//   {
+//     id: "3",
+//     noteText: "Note Content 3",
+//     dateAdded: "2022-04-10",
+//   },
+// ];
 
 export const BookDetailsScreen = ({ route, navigation }: Props & BookDetailsScreenProps) => {
   const book = route.params.book;
@@ -58,6 +59,7 @@ export const BookDetailsScreen = ({ route, navigation }: Props & BookDetailsScre
   const [bookDetailStatData, setBookDetailStatData] = useState<BookDetailStatData>();
 
   const sessions = useSessionsByBookId(book.id);
+  const notes = useNotesByBook(book.id);
 
   const handleStartReadingOnPress = () => {
     Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Heavy);
@@ -191,12 +193,12 @@ export const BookDetailsScreen = ({ route, navigation }: Props & BookDetailsScre
               </View>
             ) : (
               <View style={styles.notesContainer}>
-                {notes.map((note) => {
+                {notes.slice(0, 3).map((note) => {
                   return (
                     <View style={{ marginBottom: 20 }} key={note.id}>
                       <Card key={note.id}>
-                        <Text style={styles.bookAuthorText}>{note.noteText}</Text>
-                        <Text style={styles.bookAuthorText}>added on {note.dateAdded}</Text>
+                        <Text style={styles.bookAuthorText}>{note.note_text}</Text>
+                        <Text style={styles.bookAuthorText}>added on {note.added_timestamp.toLocaleDateString()} at {note.added_timestamp.toLocaleTimeString()}</Text>
                       </Card>
                     </View>
                   );

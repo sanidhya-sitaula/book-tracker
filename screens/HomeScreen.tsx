@@ -13,6 +13,7 @@ import { RootStackParamList } from "../navigation";
 import { useSessions } from "../hooks/useSessions";
 import { getAllChartData, getWeeklyChartData } from "../utils/ChartData";
 import { ChartData } from "react-native-chart-kit/dist/HelperTypes";
+import { BookContainer } from "../components/styled/BookContainer";
 
 type Props = NativeStackScreenProps<RootStackParamList, "Home">;
 
@@ -55,6 +56,7 @@ export const HomeScreen = ({ navigation }: Props) => {
               />
             </View>
           </View>
+      
           <View style={{ flex: 1, marginTop: 50, justifyContent: "flex-start" }}>
             <View style={styles.continueReadingTextContainer}>
               <Text style={styles.headerBoldedSubtitleText}>your daily reads</Text>
@@ -76,34 +78,11 @@ export const HomeScreen = ({ navigation }: Props) => {
               <Text style={styles.headerBoldedSubtitleText}>continue reading</Text>
             </View>
             {mostRecentBook ? (
-              <View style={styles.continueReadingCardContainer}>
-                <Card onPress={() => navigation.navigate("BookDetailsScreen", { book: mostRecentBook })}>
-                  <View style={styles.cardTopContainer}>
-                    <View style={styles.imageContainer}>
-                      <Image source={{ uri: mostRecentBook.image }} style={styles.bookImage} />
-                    </View>
-                    <View style={styles.cardTextContainer}>
-                      <Text style={styles.bookTitleText}>{mostRecentBook.name}</Text>
-                      <Text style={styles.bookAuthorText}>{mostRecentBook.author}</Text>
-                    </View>
-                  </View>
-                  <View style={styles.cardBottomContentContainer}>
-                    <View>
-                      <ProgressBar
-                        progress={mostRecentBook.current_page / mostRecentBook.pages}
-                        fillColor="#BA6400"
-                        unfilledColor="#434343"
-                        height={10}
-                        animated={true}
-                        width={300}
-                      />
-                    </View>
-                    <View>
-                      <Text style={styles.progressPercent}>{Math.floor((mostRecentBook.current_page / mostRecentBook.pages) * 100)}%</Text>
-                    </View>
-                  </View>
-                </Card>
-              </View>
+                <BookContainer 
+                    book = {mostRecentBook}
+                    onPress = {() => {navigation.navigate("BookDetailsScreen", {book: mostRecentBook})}}
+                    withInProgressLabel={true}
+                  />
             ) : (
               <Card>
                 <View style={{ justifyContent: "center", alignItems: "center", alignSelf: "center" }}>
