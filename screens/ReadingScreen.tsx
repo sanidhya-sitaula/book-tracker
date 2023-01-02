@@ -11,6 +11,7 @@ import * as Haptics from "expo-haptics";
 import { RootStackParamList } from "../navigation";
 import { ReadingSession } from "../models/ReadingSession";
 import { FontAwesome } from "@expo/vector-icons";
+import { BookContainer } from "../components/styled/BookContainer";
 
 type ReadingScreenProps = {
   route: {
@@ -35,28 +36,31 @@ export const ReadingScreen = ({ route, navigation }: Props & ReadingScreenProps)
     setStarted(true);
 
     if (!running && !started) {
-        setStartTime(new Date());
+      setStartTime(new Date());
     }
 
     if (running) {
-        setEndTime(new Date());
+      setEndTime(new Date());
     }
 
     setRunning(!running);
-  }
-
+  };
 
   const onFinishSessionPress = () => {
     Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Heavy);
     const readingSession: ReadingSession = {
-        book: book,
-        minutes: Number(Math.floor((time / 1000) % 60).toString().slice(-2)),
-        startTime: startTime!,
-        endTime: endTime!
-    }
-    navigation.navigate("FinishSessionScreen", {readingSession: readingSession});
-  }
-
+      book: book,
+      minutes: Number(
+        Math.floor((time / 1000) % 60)
+          .toString()
+          .slice(-2)
+      ),
+      startTime: startTime!,
+      endTime: endTime!,
+    };
+    navigation.navigate("SubmittedSessionScreen", {sessionId: "1", book: book });
+    //navigation.navigate("FinishSessionScreen", { readingSession: readingSession, book: book });
+  };
 
   useEffect(() => {
     let interval: any;
@@ -81,43 +85,43 @@ export const ReadingScreen = ({ route, navigation }: Props & ReadingScreenProps)
       <SafeAreaView style={{ flex: 1 }}>
         <View style={styles.container}>
           <View style={styles.timerContainer}>
-            <Text style={styles.timerText}>{("0" + Math.floor((time / 60000) % 60)).slice(-2)}:{("0" + Math.floor((time / 1000) % 60)).slice(-2)}</Text>
+            <Text style={styles.timerText}>
+              {("0" + Math.floor((time / 60000) % 60)).slice(-2)}:{("0" + Math.floor((time / 1000) % 60)).slice(-2)}
+            </Text>
           </View>
-          <View style={styles.bookContainer}>
-            <View style={{ flex: 0.1 }}>
-              <Text style={styles.bookTitleText}>reading</Text>
-            </View>
-            <View style={styles.bookCardContainer}>
-              <Card>
-                <View style={styles.bookDetailsContainer}>
-                  <View style={{ flex: 0.8 }}>
-                    <Image source={{ uri: book.image }} style={styles.bookImage} />
-                  </View>
-                  <View style={{ flexShrink: 1 }}>
-                    <Text style={styles.bookTitleText}>{book.name}</Text>
-                    <Text style={styles.bookAuthorText}>{book.author}</Text>
-                  </View>
-                </View>
-              </Card>
-            </View>
-            <View style = {{flexDirection: "row", justifyContent: "space-between"}}>
+          <View style={{ flex: 0.4, flexGrow: 0.4, flexShrink: 0.8 , borderRadius: 20}}>
+                <Image source=  {{uri: book.image}} style = {styles.bookImage}/>
+          </View>
+          <View style={{ flex: 0.3, flexGrow: 0.3, flexDirection: "row", justifyContent: "space-between" }}>
             <Pressable
-              style={[styles.readBookButtonContainer, running ? {backgroundColor: 'red', flex: 1.5} : {backgroundColor: '#1B1C39', flex: 1.5}]}
-              onPress={() => {onStartStopReadingPress()}}
+              style={[styles.readBookButtonContainer, running ? { backgroundColor: "red", flex: 1.5 } : { backgroundColor: "#1B1C39", flex: 1.5 }]}
+              onPress={() => {
+                onStartStopReadingPress();
+              }}
             >
-              <Text style={styles.readBookButtonText}>{running ? <FontAwesome name = "pause" color = "#ffffff" size = {20} /> : started ? <FontAwesome name = "forward" color = "#ffffff" size = {20} />  : <FontAwesome name = "play" color = "#ffffff" size = {20} /> } </Text>
+              <Text style={styles.readBookButtonText}>
+                {running ? (
+                  <FontAwesome name="pause" color="#ffffff" size={20} />
+                ) : started ? (
+                  <FontAwesome name="forward" color="#ffffff" size={20} />
+                ) : (
+                  <FontAwesome name="play" color="#ffffff" size={20} />
+                )}{" "}
+              </Text>
             </Pressable>
-            {started && !running &&  <Pressable
-              style={[styles.readBookButtonContainer, running ? {backgroundColor: 'red'} : {backgroundColor: '#BA6400', flex: 1.5}]}
-              onPress={() => {onFinishSessionPress()}}
-            >
-              <Text style={styles.readBookButtonText}><FontAwesome name = "stop" color = "#ffffff" size = {20} /> </Text>
-            </Pressable>
-            }
-            </View>
-         
+            {started && !running && (
+              <Pressable
+                style={[styles.readBookButtonContainer, running ? { backgroundColor: "red" } : { backgroundColor: "#BA6400", flex: 1.5 }]}
+                onPress={() => {
+                  onFinishSessionPress();
+                }}
+              >
+                <Text style={styles.readBookButtonText}>
+                  <FontAwesome name="stop" color="#ffffff" size={20} />{" "}
+                </Text>
+              </Pressable>
+            )}
           </View>
-         
         </View>
       </SafeAreaView>
     </ImageBackground>
@@ -127,10 +131,12 @@ export const ReadingScreen = ({ route, navigation }: Props & ReadingScreenProps)
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    margin: 20,
+    margin: 25,
+    justifyContent: "space-between",
+    alignItems: "center"
   },
   timerContainer: {
-    flex: 0.3,
+    flex: 0.2,
     marginTop: 50,
     justifyContent: "center",
     alignItems: "center",
@@ -152,7 +158,9 @@ const styles = StyleSheet.create({
     width: undefined,
     height: undefined,
     aspectRatio: 1,
-    borderRadius: 15,
+    flex: 1,
+    alignSelf: "center",
+    borderRadius: 25,
     resizeMode: "contain",
   },
   bookAuthorText: {
@@ -169,10 +177,6 @@ const styles = StyleSheet.create({
     color: "#ffffff",
     fontFamily: "nunito-sans-bold",
     fontSize: 25,
-    marginBottom: 10,
-    flexGrow: 3,
-    flex: 1,
-    flexShrink: 3,
     flexWrap: "wrap",
   },
   cardTopContainer: {
@@ -196,26 +200,25 @@ const styles = StyleSheet.create({
     flex: 0.8,
   },
   addNoteContainer: {
-    flex: 0.4
+    flex: 0.4,
   },
   bookDetailsContainer: {
     flexDirection: "row",
     justifyContent: "space-between",
-    flex: 1
+    flex: 1,
   },
   readBookButtonContainer: {
     backgroundColor: "red",
     borderRadius: 16,
     padding: 20,
     marginTop: 20,
-    alignSelf: 'flex-end',
+    alignSelf: "flex-end",
     alignItems: "center",
     justifyContent: "center",
-    
   },
   readBookButtonText: {
     color: "#ffffff",
     fontFamily: "nunito-sans-bold",
     fontSize: 25,
-  }
+  },
 });

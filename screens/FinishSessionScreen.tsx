@@ -1,5 +1,5 @@
 import { FontAwesome } from "@expo/vector-icons";
-import { View, Text, StyleSheet, Image, Pressable } from "react-native";
+import { View, Text, StyleSheet, Image, Pressable, ActivityIndicator } from "react-native";
 import { Card } from "../components/styled/Card";
 import { ReadingSession } from "../models/ReadingSession";
 import { Picker } from "react-native-wheel-pick";
@@ -9,11 +9,14 @@ import { addSession } from "../hooks/addSession";
 import * as Haptics from "expo-haptics";
 import { NativeStackScreenProps } from "@react-navigation/native-stack";
 import { RootStackParamList } from "../navigation";
+import { BookContainer } from "../components/styled/BookContainer";
+import { Book } from "../models/Book";
 
 type FinishSessionProps = {
   route: {
     params: {
       readingSession: ReadingSession;
+      book: Book
     };
   };
 };
@@ -31,16 +34,18 @@ export const FinishSessionScreen = ({ route, navigation }: FinishSessionProps & 
   const readingSession = route.params.readingSession;
   const book = readingSession.book;
   const [pagesRead, setPagesRead] = useState<number>(0);
+  const [loading, setLoading] = useState(false);
 
   const handleSubmit = async () => {
     Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Heavy);
 
     readingSession.pages = pagesRead;
 
+    setLoading(true);
     const addedSessionId = await addSession(readingSession);
-
+    setLoading(false);
     if (addedSessionId) {
-      navigation.navigate("Home");
+      navigation.navigate("SubmittedSessionScreen", {sessionId: addedSessionId.id, book: book});
     }
   };
 
@@ -50,41 +55,35 @@ export const FinishSessionScreen = ({ route, navigation }: FinishSessionProps & 
         <View style={styles.headerContainer}>
           <Text style={styles.headerText}>your reading session</Text>
         </View>
-        <View style={styles.bookCardContainer}>
-          <Card>
-            <View style={styles.bookDetailsContainer}>
-              <View style={{ flex: 0.8 }}>
-                <Image source={{ uri: book.image }} style={styles.bookImage} />
-              </View>
-              <View style={{ flexShrink: 1 }}>
-                <Text style={styles.bookTitleText}>{book.name}</Text>
-                <Text style={styles.bookAuthorText}>{book.author}</Text>
-              </View>
+        <View style = {{flex: 0.5}}>
+        <View style={{ flex: 1, flexGrow: 1, flexDirection: "row", marginTop: 30}}>
+          <View style={{ flex: 1, flexGrow: 1 }}>
+              <Image source = {{uri: book.image}} style = {{flex: 1, borderRadius: 20, resizeMode : "contain"}} />
+          </View>
+          <View style={{ flex: 1, flexGrow: 1, flexDirection: "column", justifyContent: "space-between", alignItems: "center" }}>
+            <View style = {{flex: 0.4, flexGrow: 0.4}}>
+              <Card>
+                <Text style={styles.headerText}>
+                  {readingSession.startTime.toLocaleTimeString().slice(0, 5)}
+                  {readingSession.startTime.toLocaleTimeString().slice(8)}
+                </Text>
+                <Text style={styles.headerSubtitleText}>{readingSession.startTime.toDateString()}</Text>
+              </Card>
             </View>
-          </Card>
+            <View style = {{flex: 0.1, flexGrow: 0.1}}>
+              <FontAwesome name="arrow-down" size={30} color="#BA6400" />
+            </View>
+            <View style = {{flex: 0.4, flexGrow: 0.4}}>
+              <Card>
+                <Text style={styles.headerText}>
+                  {readingSession.endTime.toLocaleTimeString().slice(0, 5)}
+                  {readingSession.endTime.toLocaleTimeString().slice(8)}
+                </Text>
+                <Text style={styles.headerSubtitleText}>{readingSession.endTime.toDateString()}</Text>
+              </Card>
+            </View>
+          </View>
         </View>
-        <View style={{ flex: 0.2, flexDirection: "row", marginTop: 50, justifyContent: "space-between", alignItems: "center" }}>
-          <View>
-            <Card>
-              <Text style={styles.headerText}>
-                {readingSession.startTime.toLocaleTimeString().slice(0, 5)}
-                {readingSession.startTime.toLocaleTimeString().slice(8)}
-              </Text>
-              <Text style={styles.headerSubtitleText}>{readingSession.startTime.toDateString()}</Text>
-            </Card>
-          </View>
-          <View>
-            <FontAwesome name="arrow-right" size={30} color="#BA6400" />
-          </View>
-          <View>
-            <Card>
-              <Text style={styles.headerText}>
-                {readingSession.endTime.toLocaleTimeString().slice(0, 5)}
-                {readingSession.endTime.toLocaleTimeString().slice(8)}
-              </Text>
-              <Text style={styles.headerSubtitleText}>{readingSession.endTime.toDateString()}</Text>
-            </Card>
-          </View>
         </View>
         <View
           style={{
@@ -113,7 +112,7 @@ export const FinishSessionScreen = ({ route, navigation }: FinishSessionProps & 
         </View>
         <View style={{ flex: 0.2 }}>
           <Pressable style={styles.readBookButtonContainer} onPress={handleSubmit}>
-            <Text style={styles.headerText}>submit</Text>
+            <Text style={styles.headerText}>submit {loading && <ActivityIndicator color = "#ffffff" size = "small" />}</Text>
           </Pressable>
         </View>
       </View>
