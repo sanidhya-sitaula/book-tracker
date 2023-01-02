@@ -14,11 +14,12 @@ import { ReadingSession } from "../models/ReadingSession";
 import { SubmittedSessionScreen } from "../screens/SubmittedSessionScreen";
 import { AddNoteScreen } from "../screens/AddNoteScreen";
 import { Note } from "../models/Note";
+import { AddNewBookScreen } from "../screens/AddNewBookScreen";
 
 export type RootStackParamList = {
     Root: undefined;
     Home: undefined;
-    AllBooks: undefined;
+    Bookshelf: undefined;
     Notes: undefined;
     Statistics: undefined;
     BookDetailsScreen: {book: Book};
@@ -26,6 +27,7 @@ export type RootStackParamList = {
     FinishSessionScreen: {readingSession: ReadingSession, book: Book};
     SubmittedSessionScreen: {sessionId: string, book: Book };
     AddNoteScreen: {book: Book};
+    AddNewBookScreen: undefined;
 };
 
 export default function Navigation() {
@@ -48,7 +50,7 @@ function RootNavigator() {
         <Stack.Screen name = "FinishSessionScreen" component = {FinishSessionScreen} options = {{presentation: "modal", headerShown: false}} />
         <Stack.Screen name = "SubmittedSessionScreen"  component= {SubmittedSessionScreen} options = {{presentation: "modal", headerShown: false}} />
         <Stack.Screen name = "AddNoteScreen"  component= {AddNoteScreen} options = {{presentation: "modal", headerShown: false}} />
-
+        <Stack.Screen name = "AddNewBookScreen"  component= {AddNewBookScreen} options = {{presentation: "modal", headerShown: false}} />
       </Stack.Navigator>
     );
   }
@@ -60,6 +62,7 @@ function RootNavigator() {
       <BottomTab.Navigator screenOptions = {{
         tabBarStyle: {
           backgroundColor: "#1B1C39",
+          borderTopColor:  "#1B1C39",
         },
         tabBarActiveTintColor: "#BA6400"
       }}>
@@ -74,9 +77,10 @@ function RootNavigator() {
           }}
         />
         <BottomTab.Screen
-          name="AllBooks"
+          name="Bookshelf"
           component={AllBooksScreen}
           options={{
+            headerShown: false,
             tabBarIcon: ({color, size} ) => {
               return <FontAwesome name="book" size={size} color={color} />;
             },

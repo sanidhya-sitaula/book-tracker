@@ -13,7 +13,7 @@ import { useSessionsByBookId } from "../hooks/useSessions";
 import { ChartData } from "react-native-chart-kit/dist/HelperTypes";
 import { getChartDataByBook } from "../utils/ChartData";
 import { getAveragePagesPerDay, getTotalDaysRead, getTotalMinsRead } from "../utils/BookDetailsData";
-import { useNotes, useNotesByBook } from "../hooks/useNotes";
+import { useNotesByBook } from "../hooks/useNotes";
 
 type BookDetailsScreenProps = {
   route: {
@@ -34,37 +34,19 @@ type TabsProps = "notes" | "statistics";
 
 type Props = NativeStackScreenProps<RootStackParamList, "BookDetailsScreen">;
 
-// const notes = [
-//   {
-//     id: "1",
-//     noteText: "Note Content 1",
-//     dateAdded: "2022-04-10",
-//   },
-//   {
-//     id: "2",
-//     noteText: "Note Content 2",
-//     dateAdded: "2022-04-10",
-//   },
-//   {
-//     id: "3",
-//     noteText: "Note Content 3",
-//     dateAdded: "2022-04-10",
-//   },
-// ];
-
 export const BookDetailsScreen = ({ route, navigation }: Props & BookDetailsScreenProps) => {
   const book = route.params.book;
   const progress = Math.floor((book.current_page / book.pages) * 100);
   const [chartData, setChartData] = useState<ChartData>();
   const [bookDetailStatData, setBookDetailStatData] = useState<BookDetailStatData>();
 
-  const sessions = useSessionsByBookId(book.id);
-  const notes = useNotesByBook(book.id);
+  const sessions = useSessionsByBookId(book.id!);
+  const notes = useNotesByBook(book.id!);
 
   const handleStartReadingOnPress = () => {
     Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Heavy);
-    navigation.navigate("ReadingScreen", {book: book});
-  }
+    navigation.navigate("ReadingScreen", { book: book });
+  };
 
   useEffect(() => {
     if (sessions) {
@@ -88,131 +70,140 @@ export const BookDetailsScreen = ({ route, navigation }: Props & BookDetailsScre
 
   return (
     <ScrollView style={styles.container}>
-      
-        <SafeAreaView style={{ marginTop: 40, marginLeft: 20, marginRight: 20 }}>
-          <FontAwesome name="angle-left" size={30} color="#BA4600" style={{ marginBottom: 20, marginLeft: 20 }} onPress={() => navigation.pop()} />
-          <View style={styles.bookContainer}>
-            <View style={{ flex: 0.8 }}>
-              <Image source={{ uri: book.image }} style={styles.bookImage} />
-            </View>
-            <View style={{ flexShrink: 1 }}>
-              <Text style={styles.bookTitleText}>{book.name}</Text>
-              <Text style={styles.bookAuthorText}>{book.author}</Text>
-              <Text style={styles.bookAuthorText}>{book.genre}</Text>
-              <Text style={styles.bookAuthorText}>{book.pages} pages</Text>
-            </View>
+      <SafeAreaView style={{ marginTop: 40, marginLeft: 20, marginRight: 20 }}>
+        <FontAwesome name="angle-left" size={30} color="#BA4600" style={{ marginBottom: 20, marginLeft: 20 }} onPress={() => navigation.pop()} />
+        <View style={styles.bookContainer}>
+          <View style={{ flex: 0.8 }}>
+            <Image source={{ uri: book.image }} style={styles.bookImage} />
           </View>
+          <View style={{ flexShrink: 1 }}>
+            <Text style={styles.bookTitleText}>{book.name}</Text>
+            <Text style={styles.bookAuthorText}>{book.author}</Text>
+            <Text style={styles.bookAuthorText}>{book.genre}</Text>
+            <Text style={styles.bookAuthorText}>{book.pages} pages</Text>
+          </View>
+        </View>
+        {book.current_page !== book.pages ? (
           <View style={styles.readBookContainer}>
-            <Pressable
-              style={styles.readBookButtonContainer}
-              onPress={() => handleStartReadingOnPress()}
-            >
+            <Pressable style={styles.readBookButtonContainer} onPress={() => handleStartReadingOnPress()}>
               <Text style={styles.readBookButtonText}>read this book</Text>
             </Pressable>
           </View>
-          <View style={styles.progressDetailsContainer}>
-            <Card>
-              <View style={styles.progressDetailsCardContainer}>
-                <AnimatedCircularProgress size={100} width={10} fill={progress} tintColor="#BA6400" backgroundColor="#3d5875">
-                  {(fill) => <Text style={[styles.bookAuthorText, { marginTop: 30, fontFamily: "nunito-sans-bold" }]}>{progress}%</Text>}
-                </AnimatedCircularProgress>
-                <View style={{ flexShrink: 1, marginLeft: 50 }}>
-                  <Text style={styles.bookTitleText}>page {book.current_page}</Text>
-                  <Text style={styles.bookAuthorText}>added {new Date(book.date_added.toDate()).toDateString()}</Text>
+        ) : (
+          <View style={styles.readBookContainer}>
+            <Pressable style={styles.readBookButtonContainer}>
+              <Text style={styles.readBookButtonText}>book complete!</Text>
+            </Pressable>
+          </View>
+        )}
+
+        <View style={styles.progressDetailsContainer}>
+          <Card>
+            <View style={styles.progressDetailsCardContainer}>
+              <AnimatedCircularProgress size={100} width={10} fill={progress} tintColor="#BA6400" backgroundColor="#3d5875">
+                {(fill) => <Text style={[styles.bookAuthorText, { marginTop: 30, fontFamily: "nunito-sans-bold" }]}>{progress}%</Text>}
+              </AnimatedCircularProgress>
+              <View style={{ flexShrink: 1, marginLeft: 50 }}>
+                <Text style={styles.bookTitleText}>page {book.current_page}</Text>
+                <Text style={styles.bookAuthorText}>added {new Date(book.date_added.toDate()).toDateString()}</Text>
+                {book.last_read !== undefined && (
                   <Text style={styles.bookAuthorText}>last read {new Date(book.last_read.toDate()).toDateString()}</Text>
-                </View>
+                )}
               </View>
-            </Card>
-          </View>
-          <View style={styles.tabsContainer}>
-            <Pressable
-              style={[activeTab === "statistics" ? styles.activeTabContainer : styles.inactiveTabContainer, styles.leftTab]}
-              onPress={() => setActiveTab("statistics")}
-            >
-              <Text style={activeTab === "statistics" ? styles.activeTabText : styles.inactiveTabText}>statistics</Text>
-            </Pressable>
-            <Pressable
-              style={[activeTab === "notes" ? styles.activeTabContainer : styles.inactiveTabContainer, styles.rightTab]}
-              onPress={() => setActiveTab("notes")}
-            >
-              <Text style={activeTab === "notes" ? styles.activeTabText : styles.inactiveTabText}>notes</Text>
-            </Pressable>
-          </View>
-          <View>
-            {activeTab === "statistics" ? (
-              <View style={styles.chartContainer}>
-                <Card>
-                  {chartData?.datasets.length !== 0 && chartData?.labels.length !== 0 ? (
-                    <Chart chartData={chartData} />
-                  ) : (
-                    <Text style={styles.bookAuthorText}>No Read History To Show</Text>
-                  )}
-                  <Pressable
-                    style={{ alignSelf: "flex-end", flexDirection: "row", justifyContent: "space-between", alignItems: "center", marginTop: -10 }}
-                  >
-                    <Text style={{ color: "#ffffff", fontFamily: "nunito-sans-regular", fontSize: 20 }}>view history</Text>
-                    <FontAwesome name="angle-right" size={20} color={"#BA6400"} style={{ marginLeft: 5 }} />
-                  </Pressable>
-                </Card>
-                <View style={styles.statCardContainer}>
-                  <View style={{ flex: 1, marginRight: 10 }}>
-                    <Card>
-                      <Text style={[styles.bookTitleText, { alignSelf: "center" }]}>
-                        {bookDetailStatData?.totalMinutesRead ? bookDetailStatData.totalMinutesRead : "Loading..."}
-                      </Text>
-                      <Text style={[styles.bookAuthorText, { alignSelf: "center" }]}>total minutes read</Text>
-                    </Card>
-                  </View>
-                  <View style={{ flex: 1 }}>
-                    <Card>
-                      <Text style={[styles.bookTitleText, { alignSelf: "center" }]}>
-                        {bookDetailStatData?.totalDaysSpend ? bookDetailStatData.totalDaysSpend : "Loading..."}
-                      </Text>
-                      <Text style={[styles.bookAuthorText, { alignSelf: "center" }]}>days spent reading</Text>
-                    </Card>
-                  </View>
-                </View>
-                <View style={styles.statCardContainer}>
-                  <View style={{ flex: 1, marginRight: 10 }}>
-                    <Card>
-                      <Text style={[styles.bookTitleText, { alignSelf: "center" }]}>
-                        {bookDetailStatData?.averagePages ? bookDetailStatData.averagePages : "Loading..."}
-                      </Text>
-                      <Text style={[styles.bookAuthorText, { alignSelf: "center" }]}>average pages per day</Text>
-                    </Card>
-                  </View>
-                  <View style={{ flex: 1 }}>
-                    <Card>
-                      <Text style={[styles.bookTitleText, { alignSelf: "center" }]}>
-                        {bookDetailStatData?.totalNotes ? bookDetailStatData.totalNotes : "Loading..."}
-                      </Text>
-                      <Text style={[styles.bookAuthorText, { alignSelf: "center" }]}>total notes added</Text>
-                    </Card>
-                  </View>
-                </View>
-              </View>
-            ) : (
-              <View style={styles.notesContainer}>
-                {notes.slice(0, 3).map((note) => {
-                  return (
-                    <View style={{ marginBottom: 20 }} key={note.id}>
-                      <Card key={note.id}>
-                        <Text style={styles.bookAuthorText}>{note.note_text}</Text>
-                        <Text style={styles.bookAuthorText}>added on {note.added_timestamp.toLocaleDateString()} at {note.added_timestamp.toLocaleTimeString()}</Text>
-                      </Card>
-                    </View>
-                  );
-                })}
+            </View>
+          </Card>
+        </View>
+        <View style={styles.tabsContainer}>
+          <Pressable
+            style={[activeTab === "statistics" ? styles.activeTabContainer : styles.inactiveTabContainer, styles.leftTab]}
+            onPress={() => setActiveTab("statistics")}
+          >
+            <Text style={activeTab === "statistics" ? styles.activeTabText : styles.inactiveTabText}>statistics</Text>
+          </Pressable>
+          <Pressable
+            style={[activeTab === "notes" ? styles.activeTabContainer : styles.inactiveTabContainer, styles.rightTab]}
+            onPress={() => setActiveTab("notes")}
+          >
+            <Text style={activeTab === "notes" ? styles.activeTabText : styles.inactiveTabText}>notes</Text>
+          </Pressable>
+        </View>
+        <View>
+          {activeTab === "statistics" ? (
+            <View style={styles.chartContainer}>
+              <Card>
+                {chartData?.datasets.length !== 0 && chartData?.labels.length !== 0 ? (
+                  <Chart chartData={chartData} />
+                ) : (
+                  <Text style={styles.bookAuthorText}>No Read History To Show</Text>
+                )}
                 <Pressable
                   style={{ alignSelf: "flex-end", flexDirection: "row", justifyContent: "space-between", alignItems: "center", marginTop: -10 }}
                 >
-                  <Text style={{ color: "#ffffff", fontFamily: "nunito-sans-regular", fontSize: 20 }}>view all</Text>
+                  <Text style={{ color: "#ffffff", fontFamily: "nunito-sans-regular", fontSize: 20 }}>view history</Text>
                   <FontAwesome name="angle-right" size={20} color={"#BA6400"} style={{ marginLeft: 5 }} />
                 </Pressable>
+              </Card>
+              <View style={styles.statCardContainer}>
+                <View style={{ flex: 1, marginRight: 10 }}>
+                  <Card>
+                    <Text style={[styles.bookTitleText, { alignSelf: "center" }]}>
+                      {bookDetailStatData?.totalMinutesRead ? bookDetailStatData.totalMinutesRead : "Loading..."}
+                    </Text>
+                    <Text style={[styles.bookAuthorText, { alignSelf: "center" }]}>total minutes read</Text>
+                  </Card>
+                </View>
+                <View style={{ flex: 1 }}>
+                  <Card>
+                    <Text style={[styles.bookTitleText, { alignSelf: "center" }]}>
+                      {bookDetailStatData?.totalDaysSpend ? bookDetailStatData.totalDaysSpend : "Loading..."}
+                    </Text>
+                    <Text style={[styles.bookAuthorText, { alignSelf: "center" }]}>days spent reading</Text>
+                  </Card>
+                </View>
               </View>
-            )}
-          </View>
-        </SafeAreaView>
+              <View style={styles.statCardContainer}>
+                <View style={{ flex: 1, marginRight: 10 }}>
+                  <Card>
+                    <Text style={[styles.bookTitleText, { alignSelf: "center" }]}>
+                      {bookDetailStatData?.averagePages ? bookDetailStatData.averagePages : "Loading..."}
+                    </Text>
+                    <Text style={[styles.bookAuthorText, { alignSelf: "center" }]}>average pages per day</Text>
+                  </Card>
+                </View>
+                <View style={{ flex: 1 }}>
+                  <Card>
+                    <Text style={[styles.bookTitleText, { alignSelf: "center" }]}>
+                      {bookDetailStatData?.totalNotes ? bookDetailStatData.totalNotes : "Loading..."}
+                    </Text>
+                    <Text style={[styles.bookAuthorText, { alignSelf: "center" }]}>total notes added</Text>
+                  </Card>
+                </View>
+              </View>
+            </View>
+          ) : (
+            <View style={styles.notesContainer}>
+              {notes.slice(0, 3).map((note) => {
+                return (
+                  <View style={{ marginBottom: 20 }} key={note.id}>
+                    <Card key={note.id}>
+                      <Text style={styles.bookAuthorText}>{note.note_text}</Text>
+                      <Text style={styles.bookAuthorText}>
+                        added on {note.added_timestamp.toLocaleDateString()} at {note.added_timestamp.toLocaleTimeString()}
+                      </Text>
+                    </Card>
+                  </View>
+                );
+              })}
+              <Pressable
+                style={{ alignSelf: "flex-end", flexDirection: "row", justifyContent: "space-between", alignItems: "center", marginTop: -10 }}
+              >
+                <Text style={{ color: "#ffffff", fontFamily: "nunito-sans-regular", fontSize: 20 }}>view all</Text>
+                <FontAwesome name="angle-right" size={20} color={"#BA6400"} style={{ marginLeft: 5 }} />
+              </Pressable>
+            </View>
+          )}
+        </View>
+      </SafeAreaView>
     </ScrollView>
   );
 };
