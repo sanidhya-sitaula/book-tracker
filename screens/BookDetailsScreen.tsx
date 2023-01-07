@@ -55,16 +55,16 @@ export const BookDetailsScreen = ({ route, navigation }: Props & BookDetailsScre
   }, [sessions]);
 
   useEffect(() => {
-    if (sessions) {
+    if (sessions && notes) {
       var result: BookDetailStatData = {
         totalMinutesRead: getTotalMinsRead(sessions),
         totalDaysSpend: getTotalDaysRead(sessions),
         averagePages: Math.ceil(getAveragePagesPerDay(sessions, book.current_page)),
-        totalNotes: 5,
+        totalNotes: notes.length,
       };
       setBookDetailStatData(result);
     }
-  }, [sessions]);
+  }, [sessions, notes]);
 
   const [activeTab, setActiveTab] = useState<TabsProps>("statistics");
 
@@ -147,7 +147,7 @@ export const BookDetailsScreen = ({ route, navigation }: Props & BookDetailsScre
                 <View style={{ flex: 1, marginRight: 10 }}>
                   <Card>
                     <Text style={[styles.bookTitleText, { alignSelf: "center" }]}>
-                      {bookDetailStatData?.totalMinutesRead ? bookDetailStatData.totalMinutesRead : "Loading..."}
+                      {bookDetailStatData?.totalMinutesRead !== undefined ? bookDetailStatData.totalMinutesRead : "Loading..."}
                     </Text>
                     <Text style={[styles.bookAuthorText, { alignSelf: "center" }]}>total minutes read</Text>
                   </Card>
@@ -155,7 +155,7 @@ export const BookDetailsScreen = ({ route, navigation }: Props & BookDetailsScre
                 <View style={{ flex: 1 }}>
                   <Card>
                     <Text style={[styles.bookTitleText, { alignSelf: "center" }]}>
-                      {bookDetailStatData?.totalDaysSpend ? bookDetailStatData.totalDaysSpend : "Loading..."}
+                      {bookDetailStatData?.totalDaysSpend !== undefined ? bookDetailStatData.totalDaysSpend : "Loading..."}
                     </Text>
                     <Text style={[styles.bookAuthorText, { alignSelf: "center" }]}>days spent reading</Text>
                   </Card>
@@ -165,7 +165,7 @@ export const BookDetailsScreen = ({ route, navigation }: Props & BookDetailsScre
                 <View style={{ flex: 1, marginRight: 10 }}>
                   <Card>
                     <Text style={[styles.bookTitleText, { alignSelf: "center" }]}>
-                      {bookDetailStatData?.averagePages ? bookDetailStatData.averagePages : "Loading..."}
+                      {bookDetailStatData?.averagePages !== undefined ? bookDetailStatData.averagePages : "Loading..."}
                     </Text>
                     <Text style={[styles.bookAuthorText, { alignSelf: "center" }]}>average pages per day</Text>
                   </Card>
@@ -173,7 +173,7 @@ export const BookDetailsScreen = ({ route, navigation }: Props & BookDetailsScre
                 <View style={{ flex: 1 }}>
                   <Card>
                     <Text style={[styles.bookTitleText, { alignSelf: "center" }]}>
-                      {bookDetailStatData?.totalNotes ? bookDetailStatData.totalNotes : "Loading..."}
+                      {bookDetailStatData?.totalNotes !== undefined ? bookDetailStatData.totalNotes : "Loading..."}
                     </Text>
                     <Text style={[styles.bookAuthorText, { alignSelf: "center" }]}>total notes added</Text>
                   </Card>
@@ -185,7 +185,7 @@ export const BookDetailsScreen = ({ route, navigation }: Props & BookDetailsScre
               {notes.slice(0, 3).map((note) => {
                 return (
                   <View style={{ marginBottom: 20 }} key={note.id}>
-                    <Card key={note.id}>
+                    <Card key={note.id} onPress = {() => navigation.navigate("NoteDetailsScreen", {note: note, bookId: note.book_id})}>
                       <Text style={styles.bookAuthorText}>{note.note_text}</Text>
                       <Text style={styles.bookAuthorText}>
                         added on {note.added_timestamp.toLocaleDateString()} at {note.added_timestamp.toLocaleTimeString()}
@@ -196,6 +196,7 @@ export const BookDetailsScreen = ({ route, navigation }: Props & BookDetailsScre
               })}
               <Pressable
                 style={{ alignSelf: "flex-end", flexDirection: "row", justifyContent: "space-between", alignItems: "center", marginTop: -10 }}
+                onPress = {() => navigation.navigate("Notes", { book: book })}
               >
                 <Text style={{ color: "#ffffff", fontFamily: "nunito-sans-regular", fontSize: 20 }}>view all</Text>
                 <FontAwesome name="angle-right" size={20} color={"#BA6400"} style={{ marginLeft: 5 }} />

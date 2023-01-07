@@ -61,6 +61,7 @@ export const AddNoteScreen = ({ route, navigation }: AddNoteScreenProps & Props)
       added_timestamp: new Date(),
       book_id: book.id!,
       page_number: Number(pageNumber),
+      book_name : book.name
     };
 
     setLoading(true);

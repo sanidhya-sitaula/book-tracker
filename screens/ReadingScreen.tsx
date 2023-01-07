@@ -51,15 +51,15 @@ export const ReadingScreen = ({ route, navigation }: Props & ReadingScreenProps)
     const readingSession: ReadingSession = {
       book: book,
       minutes: Number(
-        Math.floor((time / 1000) % 60)
+        Math.floor((time / 60000) % 60)
           .toString()
           .slice(-2)
       ),
       startTime: startTime!,
       endTime: endTime!,
     };
-    navigation.navigate("SubmittedSessionScreen", {sessionId: "1", book: book });
-    //navigation.navigate("FinishSessionScreen", { readingSession: readingSession, book: book });
+    //navigation.navigate("SubmittedSessionScreen", {sessionId: "1", book: book });
+    navigation.navigate("FinishSessionScreen", { readingSession: readingSession, book: book });
   };
 
   useEffect(() => {

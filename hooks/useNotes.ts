@@ -17,6 +17,8 @@ export const useNotes = () => {
         let thisNote = note.data() as Note;
         let id = note.id;
         thisNote.id = id;
+        let addedDate = note.data().added_timestamp.toDate();
+        thisNote.added_timestamp = addedDate;
         finalArray.push(thisNote);
       });
       setNotes(finalArray);
