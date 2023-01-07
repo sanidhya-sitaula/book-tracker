@@ -15,12 +15,15 @@ import { SubmittedSessionScreen } from "../screens/SubmittedSessionScreen";
 import { AddNoteScreen } from "../screens/AddNoteScreen";
 import { Note } from "../models/Note";
 import { AddNewBookScreen } from "../screens/AddNewBookScreen";
+import { AllNotesScreen } from "../screens/AllNotesScreen";
+import { NoteDetailScreen } from "../screens/NoteDetailsScreen";
+import { AddNoteByBookScreen } from "../screens/AddNoteByBookScreen";
 
 export type RootStackParamList = {
     Root: undefined;
     Home: undefined;
     Bookshelf: undefined;
-    Notes: undefined;
+    Notes: {book: Book};
     Statistics: undefined;
     BookDetailsScreen: {book: Book};
     ReadingScreen: {book: Book};
@@ -28,6 +31,8 @@ export type RootStackParamList = {
     SubmittedSessionScreen: {sessionId: string, book: Book };
     AddNoteScreen: {book: Book};
     AddNewBookScreen: undefined;
+    NoteDetailsScreen: {note: Note, bookId: string};
+    AddNoteByBookScreen: undefined;
 };
 
 export default function Navigation() {
@@ -51,6 +56,9 @@ function RootNavigator() {
         <Stack.Screen name = "SubmittedSessionScreen"  component= {SubmittedSessionScreen} options = {{presentation: "modal", headerShown: false}} />
         <Stack.Screen name = "AddNoteScreen"  component= {AddNoteScreen} options = {{presentation: "modal", headerShown: false}} />
         <Stack.Screen name = "AddNewBookScreen"  component= {AddNewBookScreen} options = {{presentation: "modal", headerShown: false}} />
+        <Stack.Screen name = "NoteDetailsScreen"  component= {NoteDetailScreen} options = {{headerShown: false}} />
+        <Stack.Screen name = "AddNoteByBookScreen"  component= {AddNoteByBookScreen} options = {{headerShown: false}} />
+
       </Stack.Navigator>
     );
   }
@@ -88,8 +96,9 @@ function RootNavigator() {
         />
          <BottomTab.Screen
           name="Notes"
-          component={NotesScreen}
+          component={AllNotesScreen}
           options={{
+            headerShown: false,
             tabBarIcon: ({color, size} ) => {
               return <FontAwesome name="table" size={size} color={color} />;
             },

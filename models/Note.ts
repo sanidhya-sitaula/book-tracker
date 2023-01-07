@@ -5,4 +5,5 @@ export interface Note {
     book_id: string;
     session_id?: string;
     page_number: number;
+    book_name: string
 }

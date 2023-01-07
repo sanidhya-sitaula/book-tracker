@@ -50,7 +50,7 @@ export const HomeScreen = ({ navigation }: Props) => {
             <View style={styles.headerImageContainer}>
               <Image
                 source={{
-                  uri: "https://scontent-lga3-1.cdninstagram.com/v/t51.2885-19/241313662_173868561536402_8129563786257425794_n.jpg?stp=dst-jpg_s320x320&_nc_ht=scontent-lga3-1.cdninstagram.com&_nc_cat=102&_nc_ohc=lTlfziaDABcAX-0OyDe&edm=AOQ1c0wBAAAA&ccb=7-5&oh=00_AfArvtMwPE8av0Sd7jDCYQuhNa3LXsHq2wAWNCZjY7_GAg&oe=63B52A29&_nc_sid=8fd12b",
+                  uri: "https://scontent-lga3-1.cdninstagram.com/v/t51.2885-19/241313662_173868561536402_8129563786257425794_n.jpg?stp=dst-jpg_s320x320&_nc_ht=scontent-lga3-1.cdninstagram.com&_nc_cat=102&_nc_ohc=O4ts_bo_s2wAX8MeLRA&edm=AOQ1c0wBAAAA&ccb=7-5&oh=00_AfA1k_uy7t_hPKGJ7xEks5ca7X-p_XioiyPhJoxU2pd2zg&oe=63BD1329&_nc_sid=8fd12b",
                 }}
                 style={styles.headerImage}
               />

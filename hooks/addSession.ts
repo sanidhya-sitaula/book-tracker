@@ -13,7 +13,7 @@ export const addSession = async (readingSession: ReadingSession) => {
         end_timestamp: readingSession.endTime,
         num_pages_read: readingSession.pages!,
         total_mins_read: readingSession.minutes,
-        book_id: readingSession.book.id
+        book_id: readingSession.book.id!
     }
 
   const addedSessionId = await db.collection("sessions").add(session);
